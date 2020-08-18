@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<!-- 上述3个meta标签*必须*放在最前面，任何其他内容都*必须*跟随其后！ -->
+<title>灵宝配置中心</title>
+<style type="text/css">
+.alert-popup {
+	height: 100px;
+	width: 200px;
+	border-radius:10px;
+	background-color: gray;
+	border: solid 1px black;
+	display: none;
+	position:relative;
+}
+
+.show-animation {
+animation: myfirst 5s;
+-moz-animation: myfirst 5s;	/* Firefox */
+-webkit-animation: myfirst 5s;	/* Safari 和 Chrome */
+-o-animation: myfirst 5s;	/* Opera */
+}
+
+
+@keyframes myfirst
+{
+0%   {background: red; left:0px; top:0px;}
+25%  {background: yellow; left:400px; top:0px;}
+50%  {background: blue; left:400px; top:400px;}
+75%  {background: green; left:0px; top:400px;}
+100% {background: red; left:0px; top:0px;}
+}
+
+@-moz-keyframes myfirst /* Firefox */
+{
+0%   {background: red; left:0px; top:0px;}
+25%  {background: yellow; left:400px; top:0px;}
+50%  {background: blue; left:400px; top:400px;}
+75%  {background: green; left:0px; top:400px;}
+100% {background: red; left:0px; top:0px;}
+}
+
+@-webkit-keyframes myfirst /* Safari 和 Chrome */
+{
+0%   {background: red; left:0px; top:0px;}
+25%  {background: yellow; left:400px; top:0px;}
+50%  {background: blue; left:400px; top:400px;}
+75%  {background: green; left:0px; top:400px;}
+100% {background: red; left:0px; top:0px;}
+}
+
+@-o-keyframes myfirst /* Opera */
+{
+0%   {background: red; left:0px; top:0px;}
+25%  {background: yellow; left:400px; top:0px;}
+50%  {background: blue; left:400px; top:400px;}
+75%  {background: green; left:0px; top:400px;}
+100% {background: red; left:0px; top:0px;}
+}
+
+</style>
+</head>
+<body style="margin-top: 10px;">
+	<div id="show" class="alert-popup" align="left">
+		<span></span>
+	</div>
+	
+	<button onclick="showAnimation()">显示动画</button>
+	
+	<button onclick="showpopup()">显示动画</button>
+	
+	<script type="text/javascript" src="/common/jquery.min.js"></script>
+	<script type="text/javascript" src="/common/popup.js"></script>
+	<script type="text/javascript">
+		function showAnimation() {
+			document.getElementById("show").style.display = "block";
+			document.getElementById("show").className="alert-popup show-animation";
+			setTimeout(function(){
+				document.getElementById("show").style.display = "none";
+				document.getElementById("show").className="alert-popup";
+			},5000);
+		}
+		
+		function showpopup() {
+			$.lingbao_popup();
+		}
+		
+	</script>
+</body>
+</html>

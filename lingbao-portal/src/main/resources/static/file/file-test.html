@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<!-- 上述3个meta标签*必须*放在最前面，任何其他内容都*必须*跟随其后！ -->
+<title>灵宝配置中心</title>
+<!-- Bootstrap -->
+<meta name="viewport" content="width=device-width,  initial-scale=1.0,  maximum-scale=1.0,  user-scalable=no">
+<link rel="stylesheet" type="text/css" href="/bootstrap/css/bootstrap.css">
+<link rel="stylesheet" type="text/css" href="/common/custom.css">
+<link rel="stylesheet" type="text/css" href="/bootstrap-table/bootstrap-table.css">
+<link rel="stylesheet" type="text/css" href="/font-awesome/css/font-awesome.css">
+<script type="text/javascript" src="/common/jquery.min.js"></script>
+<script type="text/javascript" src="/bootstrap/popper/Popper.js"></script>
+<script type="text/javascript" src="/bootstrap/js/bootstrap.js"></script>
+<script type="text/javascript" src="/bootstrap-table/bootstrap-table.js"></script>
+<script type="text/javascript" src="/bootstrap-table/locale/bootstrap-table-zh-CN.js"></script>
+<script type="text/javascript" src="/common/custom.js"></script>
+<script type="text/javascript" src="/common/validate.js"></script>
+<script type="text/javascript" src="/common/resize.js"></script>
+<script type="text/javascript" src="/common/drag.js"></script>
+<script type="text/javascript" src="/common/popup.js"></script>
+<script type="text/javascript" src="/common/confirm.js"></script>
+<script type="text/javascript" src="/common/file.js"></script>
+<script>
+	/* 更新缓存 */
+	applicationCache.onupdateready = function() {
+		location.reload();
+	}
+	applicationCache.addEventListener("updateready", function() {
+		applicationCache.swapCache();// 手工更新本地缓存
+		location.reload(); //重新加载页面页面
+	});
+
+</script>
+<style type="text/css">
+
+</style>
+</head>
+<body style="background-color: #dcdcdc">
+
+<div id="file">
+
+</div>
+
+<script type="text/javascript">
+	$("#file").lingbao_file({
+		appId : "",
+		envId : "",
+		clusterId : "",
+		fileId : "",
+		title: '文件名',
+		contents: "12312,456,12321"
+	});
+	
+</script>
+</body>
+</html>

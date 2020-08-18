@@ -1,0 +1,5 @@
+//禁用所有插件的默认行为
+$(document).off('.data-api')
+
+//禁用特定插件的默认行为
+$(document).off('。alert.data-api');

@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<!-- 上述3个meta标签*必须*放在最前面，任何其他内容都*必须*跟随其后！ -->
+<title>灵宝配置中心</title>
+<!-- Bootstrap -->
+<meta name="viewport" content="width=device-width,  initial-scale=1.0,  maximum-scale=1.0,  user-scalable=no">
+<link rel="stylesheet" type="text/css" href="/bootstrap/css/bootstrap.css">
+<link rel="stylesheet" type="text/css" href="/common/custom.css">
+<script type="text/javascript" src="/common/jquery.min.js"></script>
+<script type="text/javascript" src="/bootstrap/popper/Popper.js"></script>
+<script type="text/javascript" src="/bootstrap/js/bootstrap.js"></script>
+<script type="text/javascript" src="/common/custom.js"></script>
+</head>
+<body style="margin-top: 10px;">
+	<div class="container-fluid">
+		<div class="row justify-content-center">
+			<div>
+				<div style="text-align: center; margin-bottom: 20px">
+					<h2><strong>灵宝配置中心</strong></h2>
+				</div>
+				<div style="height:460px; width:360px; border: 2px #9D9D9D solid; background-color: #FCFCFC;">
+					<div style="margin: 20px">
+						<h4 align="center"><strong>登陆</strong></h4>
+						<form id="loginForm">
+							<div class="form-group">
+						    	<label for="email"><strong>账号</strong></label>
+						    	<input type="email" class="form-control" id="email" name="email"  placeholder="邮箱">
+						  	</div>
+						  	<div class="form-group">
+						    	<label for="password"><strong>密码</strong></label>
+						    	<input type="password" class="form-control" id="password" name="password" placeholder="密码">
+						  	</div>
+						  	<div class="form-group">
+								<button type="button" class="btn btn-success btn-block" onclick="login()">提交</button>
+								<button type="reset" class="btn btn-warning btn-block">重置</button>
+								<button type="button" class="btn btn-success btn-block" onclick="location.href='/register.html'">注册</button>
+							</div>
+						</form>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<script type="text/javascript">
+	function login() {
+		var emailReg =  new RegExp("^[A-Za-z0-9\u4e00-\\u9fa5]+@[a-zA-Z0-9_-]+(\\.[a-zA-Z0-9_-]+)+$");
+		var passwordReg = new RegExp("^[a-zA-Z0-9_]{8,14}$");
+		
+		var email = $("#loginForm").find('#email').val();
+		var password = $("#loginForm").find('#password').val();
+		
+		if (!!!email) {
+			alert("邮件不能为空");
+			return;
+		}
+		
+		if (!emailReg.test(email)) {
+			alert("邮件格式");
+			return;
+		}
+		
+		if (!!!password && !passwordReg.test(password)) {
+			alert("密码只能由数字、字母和下划线组成，长度8-14位");
+			return;
+		}
+		
+		var data = {
+				"account": email,
+				"password": password,
+			};
+		
+		
+		$.ajax({
+			type: "post",
+			url: "/api/v1/auth/login",
+			contentType: "application/x-www-form-urlencoded",
+			dataType: "json",
+			data: data,
+			beforeSend: function(XMLHttpRequest) {},
+			success:function(retData) {
+				console.log(retData);
+				localStorage.setItem("Authentication", retData.token)
+				if(!!window.location.search && window.location.search.substr(1).length>1){
+					console.log(window.location);
+					console.log(window.location.search);
+					console.log(window.location.search.substr(1));
+					window.location.href= window.location.search.substr(1);
+				} else {
+					window.location.href='/index.html';
+				}
+			},
+			error: function(e) {
+				console.log(e);
+				$.lingbao_popup({
+					content: e.responseText
+				});
+			},
+			complete: function(code) {
+				console.log(code);
+			}
+		});
+	}
+	</script>
+</body>
+</html>

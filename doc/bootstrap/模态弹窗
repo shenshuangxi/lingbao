@@ -1,0 +1,17 @@
+<div class="modal show">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-head">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+				<h4 class="modal-title">Modal 标题</h4>
+			</div>
+			<div class="modal-body">
+				<p>这里是弹窗里的具体内容....&hellip;</p>
+			</div>
+			<div class="modal-footer">
+				<button class="btn btn-default" data-dismiss="modal">关闭</button>
+				<button class="btn btn-primary" >关闭</button>
+			</div>
+		</div>
+	</div>
+</div>

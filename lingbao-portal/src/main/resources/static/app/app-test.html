@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<!-- 上述3个meta标签*必须*放在最前面，任何其他内容都*必须*跟随其后！ -->
+<title>灵宝配置中心</title>
+<!-- Bootstrap -->
+<meta name="viewport" content="width=device-width,  initial-scale=1.0,  maximum-scale=1.0,  user-scalable=no">
+<link rel="stylesheet" type="text/css" href="/bootstrap/css/bootstrap.css">
+<link rel="stylesheet" type="text/css" href="/common/custom.css">
+<link rel="stylesheet" type="text/css" href="/bootstrap-table/bootstrap-table.css">
+<link rel="stylesheet" type="text/css" href="/font-awesome/css/font-awesome.css">
+<script type="text/javascript" src="/common/jquery.min.js"></script>
+<script type="text/javascript" src="/bootstrap/popper/Popper.js"></script>
+<script type="text/javascript" src="/bootstrap/js/bootstrap.js"></script>
+<script type="text/javascript" src="/bootstrap-table/bootstrap-table.js"></script>
+<script type="text/javascript" src="/bootstrap-table/locale/bootstrap-table-zh-CN.js"></script>
+<script type="text/javascript" src="/common/custom.js"></script>
+<script type="text/javascript" src="/common/validate.js"></script>
+<script type="text/javascript" src="/common/drag.js"></script>
+<script type="text/javascript" src="/common/popup.js"></script>
+<script type="text/javascript" src="/common/confirm.js"></script>
+<script>
+	/* 更新缓存 */
+	applicationCache.onupdateready = function() {
+		location.reload();
+	}
+	applicationCache.addEventListener("updateready", function() {
+		applicationCache.swapCache();// 手工更新本地缓存
+		location.reload(); //重新加载页面页面
+	});
+
+</script>
+<style type="text/css">
+
+</style>
+</head>
+<body style="margin-top:60px; height: 100%; width: 100%;">
+	<div class="container-fluid">
+		<nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+			<a class="navbar-brand" href="/index.html">灵宝配置中心</a>
+			<button class="navbar-toggler" type="button" data-toggle="collapse"
+				data-target="#navbarSupportedContent"
+				aria-controls="navbarSupportedContent" aria-expanded="false"
+				aria-label="Toggle navigation">
+				<span class="navbar-toggler-icon"></span>
+			</button>
+			<div class="collapse navbar-collapse" id="navbarSupportedContent">
+				<ul class="navbar-nav ml-auto">
+					<li class="nav-item dropdown"><a
+						class="nav-link dropdown-toggle" href="#" id="navbarDropdown"
+						role="button" data-toggle="dropdown" aria-haspopup="true"
+						aria-expanded="false">用户中心 </a>
+						<div class="dropdown-menu dropdown-menu-right"
+							aria-labelledby="navbarDropdown">
+							<a class="dropdown-item" href="#">个人信息</a> <a
+								class="dropdown-item" href="#">修改密码</a> <a class="dropdown-item"
+								href="#">退出</a>
+						</div>
+					</li>
+				</ul>
+			</div>
+		</nav>
+	</div>
+	
+	
+	<div class="container-fluid">
+		<div class="row justify-content-center">
+			<div id="clusterDialog" style="display:none; position: fixed; width: 360px; height: 540px; background-color: #FCFCFC; border-radius: 10px; border: 2px #cdcdcd solid">
+				<div style="margin: 20px">
+					<form id="clusterForm" isUpdate=false>
+						<h4 align="center">
+							<strong id="clusterTitle">新建集群</strong>
+							<button type="button" class="close" onclick="hideClusterDialog()">
+								<span aria-hidden="true">&times;</span>
+							</button>
+						</h4>
+						<input type="hidden" id="appId">
+						<input type="hidden" id="envId">
+						<input type="hidden" id="parentClusterId">
+						<input type="hidden" id="clusterId">
+						<div class="form-group">
+							<label for="name">名称</label> 
+							<input type="text" class="form-control" id="name" name="name">
+						</div>
+						<div class="form-group">
+							<label for="instanceIps">集群关联IP</label> 
+							<input type="text" readonly class="form-control custom-select dropdown-toggle" data-toggle="dropdown" id="instanceIps" aria-haspopup="true" aria-expanded="false"> 
+							<div class="dropdown-menu" aria-labelledby="instanceIps">
+								<table id="instance-table">
+								</table>
+							</div>
+						</div>
+						<button type="button" class="btn btn-success btn-block" onclick="commitCluster()">提交</button>
+						<button type="reset" class="btn btn-warning btn-block">重置</button>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+	
+	<!-- 侧边导航栏 -->
+	<div style="width: 100%;">
+		<div style="z-index: 1; position: absolute; width: 260px;">
+			<ul class="nav flex-column" id="app-side">
+			  	<li class="nav-item">
+			    	<a class="nav-link"  href="javascript:void(0)" onclick="openAdminTab('环境管理', '/404.html')">环境管理</a>
+			  	</li>
+			  	<li class="nav-item">
+			    	<a class="nav-link"  href="javascript:void(0)" onclick="openAdminTab('组织架构管理', '/500.html')">组织架构管理</a>
+			  	</li>
+			</ul>
+		</div>
+		<div style="margin: 0 0 0 260px; padding: 5px; min-height: 600px; background:#F3F3F3;">
+			<div style="width:100%; margin: 15px; background-color:#fff!important; padding:10px; min-height:1200px;">
+				<ul id="tabs" class="nav nav-tabs" style="height: 43px">
+					
+				</ul>
+				<div class="tab-content" id="tabContent">
+					
+				</div>
+			</div>
+		</div>
+	</div>
+	
+	
+	
+	<script type="text/javascript">
+		$(document).ready(function() {
+			var appId = window.location.search.substr(1);   
+			if (!!appId && appId.length>0) {
+				$.ajax({
+					type: "get",
+					url: "/api/v1/app/"+appId+"/releation-env",
+					contentType: "application/x-www-form-urlencoded",
+					dataType: "json",
+					data: {},
+					beforeSend: function(XMLHttpRequest) {
+						XMLHttpRequest.setRequestHeader("Authentication", localStorage.getItem("Authentication"));
+					},
+					success:function(retData) {
+						for (var i=0; i<retData.length; i++) {
+							var result = "<li class='nav-item' id=\""+ retData[i].envId + "\">";
+							result += '<a class="nav-link" href="javascript:void(0)" onClick="openClusterCollapse(\''+appId+ "\' , \'" + retData[i].envId + "\' ,\'"+ retData[i].envId+'-clusters\')">'+retData[i].name+'</a>';
+							result += '<ul id="'+retData[i].envId+'-clusters" style="display:none;"></ul>';
+							result += "</li>"
+							$("#app-side").append($(result))
+						}
+					},
+					error: function(e) {
+						console.log(e);
+						if (e.status===401) {
+							window.location.href='/login.html?'+window.location.href;
+						} else {
+							window.location.href='/index.html';
+						}
+					},
+					complete: function(code) {
+						console.log(code);
+					}
+				});
+			} else {
+				$.lingbao_popup({
+					content: "参数错误"
+				});
+			}
+		});
+		
+		function commitCluster() {
+			var appId = $("#clusterForm").find("#appId").val();
+			var envId = $("#clusterForm").find("#envId").val();
+			var parentClusterId = $("#clusterForm").find("#parentClusterId").val();
+			var instanceIps = $("#clusterForm").find("#instanceIps").val();
+			var clusterId = $("#clusterForm").find("#clusterId").val();
+			var name = $("#clusterForm").find("#name").val();
+			
+			if (!!!appId) {
+				alert("appId不能为空");
+				return;
+			}
+			
+			if (!!!envId) {
+				alert("当前环境不能为空");
+				return;
+			}
+			
+			if (!!!name) {
+				alert("名称不能为空");
+				return;
+			}
+			
+			var data = JSON.stringify({
+				"appId": appId,
+				"envId": envId,
+				"parentClusterId": parentClusterId,
+				"instanceIps": instanceIps,
+				"clusterId": clusterId,
+				"name": name,
+			});
+			
+			if (!!clusterId) {
+				$.ajax({
+					type: "patch",
+					url: "/api/v1/app/"+appId+"/env/"+envId+"/cluster/"+clusterId,
+					contentType: "application/json;charset=UTF-8",
+					dataType: "json",
+					data: data,
+					beforeSend: function(XMLHttpRequest) {
+						XMLHttpRequest.setRequestHeader("Authentication", localStorage.getItem("Authentication"));
+					},
+					success:function(retData) {
+						var result = '<a class="nav-link" href="javascript:void(0)" onClick="openAdminTab(\''+retData.name+ "\', /cluster/cluster.html?appId="+appId+"&envId="+envId+"&clusterId="+retData.clusterId+')">'+retData.name+'</a>';
+						$("#"+retData.clusterId).html(result);
+					},
+					error: function(e) {
+						console.log(e);
+						$.lingbao_popup({
+							content: e.responseJSON.message
+						});
+					},
+					complete: function(code) {
+						console.log(code);
+					}
+				});
+			} else {
+				$.ajax({
+					type: "put",
+					url: "/api/v1/app/"+appId+"/env/"+envId+"/cluster",
+					contentType: "application/json;charset=UTF-8",
+					dataType: "json",
+					data: data,
+					beforeSend: function(XMLHttpRequest) {
+						XMLHttpRequest.setRequestHeader("Authentication", localStorage.getItem("Authentication"));
+					},
+					success:function(retData) {
+						var result = "<li id='"+retData.clusterId+"'>";
+						result += '<a class="nav-link" href="javascript:void(0)" onClick="openAdminTab(\''+retData.name+ "\', /cluster/cluster.html?appId="+appId+"&envId="+envId+"&clusterId="+retData.clusterId+')">'+retData.name+'</a>';
+						result += "</li>"
+						$("#"+envId+"-clusters").prepend($(result));
+					},
+					error: function(e) {
+						console.log(e);
+						$.lingbao_popup({
+							content: e.responseJSON.message
+						});
+					},
+					complete: function(code) {
+						console.log(code);
+					}
+				});
+			}
+			
+		}
+		
+		
+		function openClusterCollapse(appId, envId, clustersId) {
+			$.ajax({
+				type: "get",
+				url: "/api/v1/app/"+appId+"/env/"+envId+"/cluster",
+				contentType: "application/x-www-form-urlencoded",
+				dataType: "json",
+				data: {},
+				beforeSend: function(XMLHttpRequest) {
+					XMLHttpRequest.setRequestHeader("Authentication", localStorage.getItem("Authentication"));
+				},
+				success:function(retData) {
+					for (var i=0; i<retData.length; i++) {
+						var result = "<li id='"+retData[i].clusterId+"'>";
+						result += '<a class="nav-link" href="javascript:void(0)" onClick="openAdminTab(\''+retData[i].name+ "\', /cluster/cluster.html?appId="+appId+"&envId="+envId+"&clusterId="+retData[i].clusterId+')">'+retData[i].name+'</a>';
+						result += "</li>"
+						$("#"+clustersId).append($(result));
+					}
+					var result = "<li>"
+					result += '<a class="nav-link" href="javascript:void(0)" onClick="openClusterDialog(\'新增集群\',\''+appId+"\',\'"+envId+'\')">...</a>';
+					result += "</li>"
+					$("#"+clustersId).append($(result));
+					$("#"+clustersId).toggle();
+				},
+				error: function(e) {
+					console.log(e);
+				},
+				complete: function(code) {
+					console.log(code);
+				}
+			});
+			
+		}
+		
+		function openClusterDialog(title, appId, envId, parentClusterId, clusterId, name, instanceIps) {
+			$("#clusterForm").find('#clusterTitle').text(title);
+			$("#clusterForm").find('#appId').val(appId);
+			$("#clusterForm").find('#envId').val(envId);
+			$("#clusterForm").find('#parentClusterId').val(parentClusterId);
+			$("#clusterForm").find("#clusterId").val(clusterId);
+			$("#clusterForm").find("#name").val(name);
+			$("#clusterDialog").show();
+			$("#clusterDialog").drag();
+			getInstanceTables(appId, envId, instanceIps);
+		}
+		
+		function hideClusterDialog() {
+			$("#clusterDialog").hide();
+		}
+		
+		function getInstanceTables(appId, envId, instanceIps) {
+			$('#instance-table').css("width", $("#instanceIps").css("width"));
+			$('#instance-table').bootstrapTable({
+				url : '/api/v1/app/'+appId+'/env/'+envId+'/instance?rand='+Math.random(),
+				ajaxOptions: {
+					headers: {"Authentication" : localStorage.getItem("Authentication")}
+				},
+				uniqueId: "Ip", 
+				columns : [ {
+                    checkbox: true,  
+                    visible: true   //是否显示复选框
+                }, {
+					field : 'appId',
+					title : 'appId'
+				}, {
+					field : 'Ip',
+					title : 'Ip'
+				}],
+				onCheck: function (row, element) {
+	                if (!!$("#instanceIps").val() && $("#instanceIps").val().length>0) {
+						$("#instanceIps").val($("#instanceIps").val()+","+row.IP);
+					} else {
+						$("#instanceIps").val(row.IP);
+					}
+	            },
+	            onUncheck: function (row, element) {
+	                console.log(row);
+	                console.log(element);
+	                if (!!$("#instanceIps").val() && $("#instanceIps").val().indexOf(row.name)!=-1) {
+	                	var arr = $("#instanceIps").val().split(",");
+	                	var value = "";
+	                	for (var i=0; i<arr.length; i++) {
+	                		if (arr[i]!=row.IP){
+	                			if (value.length===0) {
+	                				value += arr[i];
+	                			} else {
+	                				value += "," + arr[i];
+	                			}
+	                		}
+	                	}
+						$("#instanceIps").val(value);
+					}
+	            },
+	            onCheckAll: function (rows) {
+	            	var value = "";
+	            	for (var i=0; i< rows.length; i++) {
+               			if (value.length==0) {
+               				value += rows[i].name;
+               			} else {
+               				value += "," + rows[i].name;
+               			}
+	            	}
+	            	$("#instanceIps").val(value);
+	            },
+	            onUncheckAll: function (rows) {
+	            	$("#instanceIps").val("");
+	            },
+	            onLoadSuccess: function () {
+	            	if (!!$("#instanceIps").val() && $("#instanceIps").val().length>0) {
+	            		$('#instance-table').bootstrapTable("checkBy", {field:"Ip", values: instanceIps.spilt(",")})
+	            	}
+	            }
+			});
+		}
+	</script>
+</body>
+</html>

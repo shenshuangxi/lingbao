@@ -1,0 +1,40 @@
+1, 声明立即调用的函数	+function($){"use strict";...}(jQuery);
+2, 定义插件类及相关原型方法	Alert prototype.close
+3, 在jQuery上定义插件并重设插件构造函数 $.fn.alert.Constructor=Alert
+4, 防冲突处理	$.fn.alert.noConfict
+5, 绑定各种触发事件
+
+
+例子:
+	+function ($) {
+		//1,使用严格ES5
+		"use strict";
+		
+		//2, alert插件类及原型方法定义
+		var dismiss = '[data-dismiss="alert"]'	//定义选择器，所有符合该定义的自定义属性，都会触发下面的事件
+		var Alert = function (el) {
+			$(el).on('click', dismiss, this.close)	//传入元素，如果元素内部有dismiss上设置的自定义属性，则click事件会触发原型上的close方法
+		}
+		Alert.prototype。close = function (e) {
+			//关闭警告框的主要代码设置
+		}
+		
+		//3, 在jQuery上定义alert插件, 并重设插件构造器
+		var old = $.fn.alert
+		$.fn.alert = function(option) {
+			return this.each(function(){
+				//根据选择器，遍历所有符合规则的元素， 然后在元素上绑定插件实例，以监控用户行为事件
+			})
+		}
+		$.fn.alert.Constructor = Alert	//重设插件构造器，可以通过该属性获取插件的真实函数
+		
+		//4, 防冲突处理
+		$.fn.alert.noConflict = function() {
+			$.fn.alert = old;	//恢复以前的旧代码
+			return this;		//将 $.fn.alert.noConflict() 设置为bootstrap的alert插件
+		}
+		
+		//5, 绑定触发事件
+		$(document).on('click.bs.alert.data-api', dismiss, Alert.prototype.close)
+		
+	}(window.jQuery)

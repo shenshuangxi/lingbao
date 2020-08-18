@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<link rel="stylesheet" href="/bootstrap/css/bootstrap.css" />
+<script type="text/javascript" href="/bootstrap/js/bootstrap.min.js" ></script>
+<script type="text/javascript" src="/common/jquery.min.js"></script>
+</head>
+<body>
+	
+	
+	<ul style="list-style-type: none;">
+		<li>
+			<a href="javascript:void(0)" onclick="displayOrHide('beijin')">北京市</a>
+			<ul id="beijin" style="list-style-type: none; display: none;">
+				<li>东城区</li>
+				<li>西城区</li>
+				<li>海淀区</li>
+				<li>朝阳区</li>
+				<li>丰城区</li>
+			</ul>
+		</li>
+		<li>
+			<a href="javascript:void(0)" onclick="displayOrHide('shenzheng')">深圳市</a>
+			<ul id="shenzheng" style="list-style-type: none; display: none;">
+				<li>南山区</li>
+				<li>福田区</li>
+				<li>罗湖区</li>
+				<li>龙华新区</li>
+				<li>龙岗区</li>
+				<li>坪山区</li>
+			</ul>
+		</li>
+	</ul>
+	<script type="text/javascript">
+		function displayOrHide(id){
+			$('#'+id).toggle();
+		}
+	</script>
+	
+<div class="container">
+  <div class="row justify-content-start">
+    <div class="col-4">
+      One of two columns
+    </div>
+    <div class="col-4">
+      One of two columns
+    </div>
+  </div>
+  <div class="row justify-content-center">
+    <div class="col-4">
+      One of two columns
+    </div>
+    <div class="col-4">
+      One of two columns
+    </div>
+  </div>
+  <div class="row justify-content-end">
+    <div class="col-4">
+      One of two columns
+    </div>
+    <div class="col-4">
+      One of two columns
+    </div>
+  </div>
+  <div class="row justify-content-around">
+    <div class="col-4">
+      One of two columns
+    </div>
+    <div class="col-4">
+      One of two columns
+    </div>
+  </div>
+  <div class="row justify-content-between">
+    <div class="col-4">
+      One of two columns
+    </div>
+    <div class="col-4">
+      One of two columns
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>

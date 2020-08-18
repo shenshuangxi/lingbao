@@ -1,0 +1,5 @@
+1, 删除名称为viewport的meta元素    <meta name="viewport" ...>
+2, 为container 设置一个固定的宽度值, 从而覆盖框架的默认width设置， width: 970px!important 确保该值放在默认的Bootstrap的CSS后面
+3, 如果使用导航组件, 还需要移除所有的折叠行为和展开行为
+4, 对于栅栏布局, 额外增加 .col-xs-* 样式, 或替换 .col-md-* 和 .col-lg-* 样式
+5, 对于IE8, 需要引入 Respond.js 文件 

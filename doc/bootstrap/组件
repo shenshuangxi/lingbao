@@ -1,0 +1,54 @@
+图标 glyphicon  glyphicon-*
+
+下拉菜单 dropdown  dropdown-* 
+
+分隔符 divider
+
+按钮组	 btn-group  btn-toolbar btn-group-justified
+
+	组合式下拉菜单  
+		<div class="btn-group">
+			<button type="button" class="btn btn-success dropdown-toggle" data-toggle="dropdown"> Success <span class="caret"></span></button>
+			<ul class="dropdown-menu">
+				<li><a href="#">Action</a></li>
+				<li><a href="#">Another Action</a></li>
+				<li><a href="#">Something else here</a></li>
+				<li class="divider"></li>
+				<li><a href="#">Separated link</a></li>
+			</ul>
+		</div>
+
+按钮下拉菜单 
+
+输入框组
+
+导航
+
+导航条
+
+面包屑导航
+
+分页导航
+
+标签
+
+徽章
+
+大屏幕展播
+
+页面标签
+
+缩略图
+
+警告框
+
+进度条
+
+媒体对象
+
+列表组
+
+面板
+
+洼池
+

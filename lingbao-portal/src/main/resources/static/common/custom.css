@@ -1,0 +1,176 @@
+/* 基础样式 */
+
+html, body {
+	width: 100%;
+	height: 100%;
+	margin: 0;
+	padding: 0;
+}
+
+.title {
+	position: relative;	/*相对布局*/
+	overflow: hidden;
+	display: table-cell;
+	float : left;
+	width : 180px;
+	height : 180px;
+	margin: 0 10px 10px 0;
+	padding: 0;
+	cursor: pointer;
+	background-color: #eeeeee;
+	box-shadow: inset 0px 0px 1px #FFFFCC;
+}
+
+.title:hover {
+	outline: #999999 solid 3px;
+}
+
+.title.no-outline {
+	outline-color: transparent;
+}
+
+/* 尺寸样式 */
+.title.half {
+	width: 55px;
+	height: 55px;
+}
+
+.title.double {
+	width: 250px;
+}
+
+.title.triple {
+	width: 380px;
+}
+
+.title.quadro {
+	width: 510px;
+}
+
+
+.title.double-vertical {
+	height: 250px;
+}
+
+.title.triple-vertical {
+	height: 380px;
+}
+
+.title.quadro-vertical {
+	height: 510px;
+}
+
+
+/* 颜色样式  */
+
+/* 背景颜色样式 */
+
+.bg-red {
+	background-color: #e51400 !important
+}
+
+.bg-green {
+	background-color: #60a917 !important
+}
+
+.bg-darkblue {
+	background-color: #16499a !important
+}
+
+/* 内部文本样式 */
+.fq-red {
+	color: #e51400 !important
+}
+
+.fq-green {
+	color: #60a917 !important
+}
+
+.fq-darkblue {
+	color: #16499a !important
+}
+
+/* 轮廓样式 */
+.ol-red {
+	outline-color: #e51400 !important
+}
+
+.ol-green {
+	outline-color: #60a917 !important
+}
+
+.ol-darkblue {
+	outline-color: #16499a !important
+}
+
+/*边框颜色样式*/
+.bd-red {
+	border-color: #e51400 !important
+}
+
+.bd-green {
+	border-color: #60a917 !important
+}
+
+.bd-darkblue {
+	border-color: #16499a !important
+}
+
+
+/* 状态样式 */
+
+.title.selected {
+	border: 4px #4390df solid;
+}
+
+.title.selected:after {
+	position: absolute;
+	display: block;
+	border-top: 28px solid #4390df;
+	border-left: 28px solid transparent;
+	right: 0;
+	top: 0;
+	content: "";
+	z-index: 101;
+}
+
+
+.title.selected:before {
+	position: absolute;
+	display: block;
+	content: "\e013";
+	color: #fff;
+	right: 0;
+	top: 0;
+	font-family: Glyphicons Halflings;
+	font-size: 10pt;
+	font-weight: normal;
+	z-index: 102;
+}
+
+
+
+.title .title-content {
+	top: 30%;
+	margin:2px;
+	width: 100%;
+	position: absolute;
+	text-align: center;
+	overflow: hidden;
+	color: white;
+}
+
+.login-page {
+	border: 4px #4390df solid;
+	background-color: white;
+}
+
+
+
+
+
+
+
+
+
+

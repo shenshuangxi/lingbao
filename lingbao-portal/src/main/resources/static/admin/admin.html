@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<!-- 上述3个meta标签*必须*放在最前面，任何其他内容都*必须*跟随其后！ -->
+<title>灵宝配置中心</title>
+<!-- Bootstrap -->
+<meta name="viewport" content="width=device-width,  initial-scale=1.0,  maximum-scale=1.0,  user-scalable=no">
+<link rel="stylesheet" type="text/css" href="/bootstrap/css/bootstrap.css">
+<link rel="stylesheet" type="text/css" href="/common/custom.css">
+<link rel="stylesheet" type="text/css" href="/font-awesome/css/font-awesome.css">
+<script type="text/javascript" src="/common/jquery.min.js"></script>
+<script type="text/javascript" src="/bootstrap/popper/Popper.js"></script>
+<script type="text/javascript" src="/bootstrap/js/bootstrap.js"></script>
+<script type="text/javascript" src="/common/custom.js"></script>
+<script type="text/javascript" src="/common/validate.js"></script>
+<script type="text/javascript" src="/common/drag.js"></script>
+<script type="text/javascript" src="/common/popup.js"></script>
+<script type="text/javascript" src="/common/confirm.js"></script>
+</head>
+<body style="margin-top: 100px; background-color: #ffffff;">
+		<!-- 顶部导航栏 -->
+		<div class="container-fluid">
+			<nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+				<a class="navbar-brand" href="/index.html">灵宝配置中心</a>
+				<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navBarContent">
+					<span class="navbar-toggler-icon"></span>
+				</button>
+				<div class="navbar-collapse collapse" id="navBarContent">
+	                 <ul class="navbar-nav ml-auto">
+	                 	  <li class="nav-item">
+						    <a class="nav-link active" href="javascript:void(0)" onclick="loadPage('/admin/user.html')">用户管理</a>
+						  </li>
+						  <li class="nav-item">
+						    <a class="nav-link active" href="javascript:void(0)" onclick="loadPage('/admin/env.html')">环境管理</a>
+						  </li>
+						  <li class="nav-item">
+						    <a class="nav-link active"  href="#">组织架构管理</a>
+						  </li>
+	                     <li class="nav-item dropdown">
+							<a class="nav-link active dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">用户中心 </a>
+							<div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
+								<a class="dropdown-item" href="#">个人信息</a> 
+								<a class="dropdown-item" href="#">修改密码</a>
+								<a class="dropdown-item" href="#">退出</a>
+							</div>
+						</li>
+	                 </ul>
+	             </div>
+			</nav>
+		</div>
+	</div>
+	
+	<div id="page-wrapper"></div>
+	
+	<script type="text/javascript">
+		loadPage('/admin/user.html');
+		function loadPage(url) {
+			$("#page-wrapper").load(url);
+		}
+	</script>
+</body>
+</html>

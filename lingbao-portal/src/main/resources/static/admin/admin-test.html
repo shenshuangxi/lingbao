@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<!-- 上述3个meta标签*必须*放在最前面，任何其他内容都*必须*跟随其后！ -->
+<title>灵宝配置中心</title>
+<!-- Bootstrap -->
+<meta name="viewport" content="width=device-width,  initial-scale=1.0,  maximum-scale=1.0,  user-scalable=no">
+<link rel="stylesheet" type="text/css" href="/bootstrap/css/bootstrap.css">
+<link rel="stylesheet" type="text/css" href="/common/custom.css">
+<script type="text/javascript" src="/common/jquery.min.js"></script>
+<script type="text/javascript" src="/common/jquery.metisMenu.js"></script>
+<script type="text/javascript" src="/bootstrap/popper/Popper.js"></script>
+<script type="text/javascript" src="/bootstrap/js/bootstrap.js"></script>
+<script type="text/javascript" src="/common/custom.js"></script>
+<style type="text/css">
+.sidebar-collapse , .sidebar-collapse .nav{
+	background:none;
+}
+.sidebar-collapse .nav {
+	padding:0;
+}
+.sidebar-collapse .nav > li > a {
+background: #FFFFFF;
+text-shadow: none;
+color:#0000FF;
+}
+.sidebar-collapse > .nav > li > a {
+	padding:15px 10px;
+}
+.sidebar-collapse > .nav > li {
+	border-bottom: 1px solid rgba(240, 240, 240, 1) !important;
+}
+.sidebar-collapse .nav > li > a:hover,
+.sidebar-collapse .nav > li > a:focus {
+	background:#F3F3F3;
+	outline:0;
+}
+
+#wrapper {
+    width: 100%;
+    margin-top:60px;
+}
+
+#page-wrapper {
+    padding: 15px 15px;
+    min-height: 600px;
+    background:#F3F3F3;
+   
+}
+#page-inner {
+    width:100%;
+    margin: 0px 20px 10px 0px;
+    background-color:#fff!important;
+    padding:10px;
+    min-height:1200px;
+}
+
+
+@media(min-width:768px) {
+     #page-wrapper{
+        margin: 0 0 0 260px;
+        padding: 0px 30px;
+        min-height: 1200px;
+    }
+    .navbar-side {
+        z-index: 1;
+        position: absolute;
+        width: 260px;
+    }
+   .navbar {
+ 		border-radius: 0px; 
+	}
+}
+</style>
+</head>
+<body>
+	<div id="wrapper">
+		<!-- 顶部导航栏 -->
+		<div class="container-fluid">
+			<nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+				<a class="navbar-brand" href="/">灵宝配置中心</a>
+				<button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".sidebar-collapse">
+					<span class="navbar-toggler-icon"></span>
+				</button>
+				<div class="navbar-collapse collapse">
+	                 <ul class="navbar-nav ml-auto">
+	                     <li class="nav-item dropdown">
+							<a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">用户中心 </a>
+							<div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
+								<a class="dropdown-item" href="#">个人信息</a> 
+								<a class="dropdown-item" href="#">修改密码</a>
+								<a class="dropdown-item" href="#">退出</a>
+							</div>
+						</li>
+	                 </ul>
+	             </div>
+			</nav>
+		</div>
+		<!-- 侧边导航栏 -->
+		<nav class="navbar-expand-lg navbar-dark bg-dark navbar-side" role="navigation">
+			<div class="sidebar-collapse">
+				<ul class="nav flex-column" id="admin-side">
+				  <li class="nav-item">
+				    <a class="nav-link active" onclick="openAdminTab('用户管理', '/401.html')">用户管理</a>
+				  </li>
+				  <li class="nav-item">
+				    <a class="nav-link"  onclick="openAdminTab('环境管理', '/404.html')">环境管理</a>
+				  </li>
+				  <li class="nav-item">
+				    <a class="nav-link"  onclick="openAdminTab('组织架构管理', '/500.html')">组织架构管理</a>
+				  </li>
+				</ul>
+			</div>
+		</nav>
+		
+		<div id="page-wrapper">
+			<div id="page-inner">
+				<ul id="tabs" class="nav nav-tabs">
+				
+				</ul>
+				<div class="tab-content" id="tabContent">
+				
+				</div>
+			</div>
+		</div>
+	</div>
+</body>
+</html>

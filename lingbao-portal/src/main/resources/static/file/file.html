@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<!-- 上述3个meta标签*必须*放在最前面，任何其他内容都*必须*跟随其后！ -->
+<title>灵宝配置中心</title>
+<!-- Bootstrap -->
+<meta name="viewport" content="width=device-width,  initial-scale=1.0,  maximum-scale=1.0,  user-scalable=no">
+<link rel="stylesheet" type="text/css" href="/bootstrap/css/bootstrap.css">
+<link rel="stylesheet" type="text/css" href="/common/custom.css">
+<link rel="stylesheet" type="text/css" href="/bootstrap-table/bootstrap-table.css">
+<link rel="stylesheet" type="text/css" href="/font-awesome/css/font-awesome.css">
+<script type="text/javascript" src="/common/jquery.min.js"></script>
+<script type="text/javascript" src="/bootstrap/popper/Popper.js"></script>
+<script type="text/javascript" src="/bootstrap/js/bootstrap.js"></script>
+<script type="text/javascript" src="/bootstrap-table/bootstrap-table.js"></script>
+<script type="text/javascript" src="/bootstrap-table/locale/bootstrap-table-zh-CN.js"></script>
+<script type="text/javascript" src="/common/custom.js"></script>
+<script type="text/javascript" src="/common/validate.js"></script>
+<script type="text/javascript" src="/common/resize.js"></script>
+<script type="text/javascript" src="/common/drag.js"></script>
+<script type="text/javascript" src="/common/popup.js"></script>
+<script type="text/javascript" src="/common/confirm.js"></script>
+<script type="text/javascript" src="/common/file.js"></script>
+<script>
+	/* 更新缓存 */
+	applicationCache.onupdateready = function() {
+		location.reload();
+	}
+	applicationCache.addEventListener("updateready", function() {
+		applicationCache.swapCache();// 手工更新本地缓存
+		location.reload(); //重新加载页面页面
+	});
+
+</script>
+</head>
+<body style="background-color: #dcdcdc">
+
+	<div id="cluster-file"  style="margin-top:20px; width:100%; background-color: #dcdcdc;">
+		
+	</div>
+	
+	<script type="text/javascript">
+	$(document).ready(function(){
+		var params = window.location.search.substr(1).split("+");   
+		appId = params[0];
+		envId = params[1];
+		clusterId = params[2];
+		console.log(params);
+		reloadFiles(appId, envId, clusterId);
+	});
+	function reloadFiles(appId, envId, clusterId) {
+		$.ajax({
+			type: "get",
+			url: "/api/v1/app/"+appId+"/env/"+envId+"/cluster/"+clusterId+"/file",
+			dataType: "json",
+			beforeSend: function(XMLHttpRequest) {
+				XMLHttpRequest.setRequestHeader("Authentication", localStorage.getItem("Authentication"));
+			},
+			success:function(retData) {
+				$("#cluster-file").html("");
+				if (retData.length>0) {
+					for (var i=0; i<retData.length; i++) {
+						console.log(retData[i]);
+						var fileDiv = $("<div style='margin-top:20px;'></div>").appendTo($("#cluster-file"));
+						var contents = "";
+						for(var key in retData[i].contents) {
+						   	contents += retData[i].contents[key]+",";
+						}
+						console.log(contents);
+						if (contents.length>1) {
+							contents = contents.substring(0,contents.length-1);
+						}
+						console.log(contents);
+						fileDiv.lingbao_file({
+							"appId": retData[i].appId,
+							"envId": retData[i].envId,
+							"clusterId": retData[i].clusterId,
+							"fileId": retData[i].id,
+							"fileName": retData[i].name,
+							"contents": contents,
+							needButtons: false
+						});
+					}
+				} 
+			},
+			error: function(e) {
+				console.log(e);
+				$.lingbao_popup({
+					content: e.responseText
+				});
+				if (e.status===401) {
+					window.location.href='/login.html?'+window.location.href;
+				}
+			},
+			complete: function(code) {
+				console.log(code);
+			}
+		});
+	}
+	</script>
+</body>
+</html>

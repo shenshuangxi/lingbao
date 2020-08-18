@@ -1,0 +1,147 @@
+
+<!-- https://www.cnblogs.com/wuhuacong/p/7284420.html -->
+
+<link rel="stylesheet" type="text/css" href="/bootstrap-table/bootstrap-table.css">
+<link rel="stylesheet" type="text/css" href="/font-awesome/css/font-awesome.css">
+
+
+<div class="search">
+	<form class="form-inline justify-content-center">
+		<input class="form-control-sm mr-sm-2" type="search" placeholder="Search" aria-label="Search">
+		<button class="btn btn-success btn-sm my-2 my-sm-0" type="submit">Search</button>
+	</form>
+</div>
+
+<div class="table-responsive-sm">
+	<!-- <div id="toolbar" class="justify-content-center">
+	    <a href="javascript:void(0);" class="btn btn-primary btn-sm" onclick="openAddUserDialog()"><i class="fa fa-user-plus"></i>新增</a>
+	    <a href="javascript:void(0);" class="btn btn-danger btn-sm" onclick="disableUser()"><i class="fa fa-lock"></i>禁用</a>
+	    <a href="javascript:void(0);" class="btn btn-success btn-sm" onclick="enableUser()"><i class="fa fa-unlock"></i>启用</a>
+	</div> -->
+	<table id="table" class="table table-bordered">
+
+	</table>
+</div>
+
+<!-- <div class="container-fluid">
+	<div class="row justify-content-center">
+		<div id="userDialog" style="display: none; position: fixed; width: 360px; height: 540px; background-color: #FCFCFC; border-radius: 10px;  border: 2px #cdcdcd solid">
+			<div style="margin: 20px">
+				<form id="appForm" isUpdate=false>
+					<h4 align="center">
+						<strong id="appTitle">添加用户</strong>
+						<button type="button" class="close" onclick="hideUserDialog()">
+				          	<span aria-hidden="true">&times;</span>
+				        </button>
+					</h4>
+					<div class="form-group">
+					    <label for="email">邮件地址</label>
+					    <input type="email" class="form-control" id="email" name="email"placeholder="Enter email">
+					  </div>
+					  <div class="form-group">
+					    <label for="phone">手机</label>
+					    <input type="number" class="form-control" id="phone" name="phone"placeholder="phone">
+					  </div>
+					  <div class="form-group">
+					    <label for="name">姓名</label>
+					    <input type="text" class="form-control" id="name" name="name" placeholder="name">
+					  </div>
+					  <div class="form-group">
+					    <label for="userName">用户名</label>
+					    <input type="text" class="form-control" id="userName"  name="userName" placeholder="account">
+					  </div>
+					<button type="button" class="btn btn-success btn-block" onclick="createApp()">提交</button>
+					<button type="reset" class="btn btn-warning btn-block">重置</button>
+				</form>
+			</div>
+		</div>
+	</div>
+</div> -->
+
+
+<script type="text/javascript" src="/bootstrap-table/bootstrap-table.js"></script>
+<script type="text/javascript" src="/bootstrap-table/locale/bootstrap-table-zh-CN.js"></script>
+<script type="text/javascript">
+	$(document).ready(function() {
+		$('#table').bootstrapTable({
+			url : '/api/v1/user?rand='+Math.random(),
+			ajaxOptions: {
+				headers: {"Authentication" : localStorage.getItem("Authentication")}
+			},
+			toolbar : "#toolbar",
+			sidePagination: "client",
+			pagination: true,
+			pageNumber: 1, 
+			pageSize:10,
+			pageList: [10, 25, 50, 100],
+			clickToSelect: true,
+			uniqueId: "account", 
+			columns : [{
+				field : 'account',
+				title : '账号'
+			}, {
+				field : 'name',
+				title : '姓名'
+			}, {
+				field : 'phone',
+				title : '手机号'
+			}, {
+				field : 'email',
+				title : '邮箱'
+			},{
+				field : 'roles',
+				title : "权限",
+				formatter: function (value, row, index) {
+					console.log(value);
+					console.log(row);
+					console.log(index);
+					var result = "<select class='form-control' onChange='roleChange(\""+row.account+"\", this.value)'>";
+					if (value==='admin') {
+						result += "<option value='admin' selected>admin</option><option value='' ></option>"
+					} else {
+						result += "<option value='admin'>admin</option><option value='' selected></option>"
+					}
+					result += "</select>";
+					return result;
+				}
+			}]
+		});
+	});
+	
+	function roleChange(account, changeValue) {
+		$.ajax({
+			type: "patch",
+			url: "/api/v1/user/"+account,
+			contentType: "application/x-www-form-urlencoded",
+			dataType: "json",
+			data: {roles:changeValue},
+			beforeSend: function(XMLHttpRequest) {
+				XMLHttpRequest.setRequestHeader("Authentication", localStorage.getItem("Authentication"));
+			},
+			success:function(data) {
+				console.log(data);
+				$.lingbao_popup({
+					content: data.responseText
+				});
+			},
+			error: function(data) {
+				console.log(data);
+				$.lingbao_popup({
+					content: data.responseText
+				});
+			},
+			complete: function(code) {
+				console.log(code);
+			}
+		});
+	}
+	
+	function hideUserDialog(){
+		$('#userDialog').hide();
+	}
+
+	function openAddUserDialog() {
+		$('#userDialog').show();
+		$('#userDialog').drag();
+	}
+</script>

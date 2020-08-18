@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration >
+	<Properties>
+		<property name="LOG_FILE" value="lingbao-cqrs.log" />
+	</Properties>
+	<Appenders>
+		<File name="File" fileName="${LOG_FILE}">
+		    <PatternLayout pattern="%d %-5p %t %l %m%n"/>
+	    </File>
+		<Console name="Console" Target="SYSTEM_OUT">
+		   	<PatternLayout pattern="%d %-5p %t %l %m%n"/>
+		</Console>
+	</Appenders>
+	<Loggers>
+	    <root level="INFO">
+			<appender-ref ref="File" />
+			<appender-ref ref="Console" />
+		</root>
+	</Loggers>
+	
+</configuration>

@@ -1,0 +1,463 @@
+<script type="text/javascript" src="/common/validate.js"></script>
+
+<div class="container-fluid">
+	<div class="row no-gutter">
+		<div class="col-sm-7 offset-sm-3" style="margin-top: 5px;">
+			<a href="javascript:void(0);" class="btn btn-primary btn-sm" onclick="pushCommitFiles()"><i class="fa fa-lock"></i>发布</a>
+			<a href="javascript:void(0);" class="btn btn-warning btn-sm" onclick="openCommitFileDialog()"><i class="fa fa-unlock-alt"></i>提交</a>
+			<a href="javascript:void(0);" class="btn btn-danger btn-sm" onclick="mergeFiles()"><i class="fa fa-align-justify"></i>合并</a>
+			<a href="javascript:void(0);" class="btn btn-danger btn-sm" onclick="rollBackCommitFile()"><i class="fa fa-undo"></i>回滚</a>
+			<a href="javascript:void(0);" class="btn btn-info btn-sm" onclick="openHistoryDialog()"><i class="fa fa-history"></i>历史</a>
+			<a href="javascript:void(0);" class="btn btn-success btn-sm" onclick="createNewFile()"><i class="fa fa-file-text"></i>新建文件</a>
+		</div>
+	</div>
+</div>
+
+<div id="fileDialog" style="z-index:1000; left:40%; top:15%; display:none; position: fixed; width: 360px; height: 540px; background-color: #FCFCFC; border-radius: 10px; border: 2px #cdcdcd solid">
+	<div style="margin: 20px">
+		<input type="hidden" id="file-appId">
+		<input type="hidden" id="file-envId">
+		<input type="hidden" id="file-clusterId">
+		<form id="fileForm" isUpdate=false>
+			<h4 align="center">
+				<strong id="clusterTitle">新建文件</strong>
+				<button type="button" class="close" onclick="hideFileDialog()">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</h4>
+			<div class="form-group">
+				<label for="name">名称</label> 
+				<input type="text" class="form-control" id="name" name="name">
+			</div>
+			<button type="button" class="btn btn-success btn-block" onclick="commitCreateFile()">提交</button>
+			<button type="reset" class="btn btn-warning btn-block">重置</button>
+		</form>
+	</div>
+</div>
+
+<div id="commitFileDialog" style="z-index:1000; left:40%; top:15%; display:none; position: fixed; width: 360px; height: 540px; background-color: #FCFCFC; border-radius: 10px; border: 2px #cdcdcd solid">
+	<div style="margin: 20px">
+		<input type="hidden" id="commit-file-appId">
+		<input type="hidden" id="commit-file-envId">
+		<input type="hidden" id="commit-file-clusterId">
+		<form id="commitFileForm" isUpdate=false>
+			<h4 align="center">
+				<strong id="clusterTitle">文件提交</strong>
+				<button type="button" class="close" onclick="hideCommitFileDialog()">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</h4>
+			<div class="form-group">
+				<label for="comment">备注</label> 
+				<textarea class="form-control" id="comment" name="comment" rows="3" cols="50" required="required"></textarea>
+			</div>
+			<button type="button" class="btn btn-success btn-block" onclick="commitFiles()">提交</button>
+			<button type="reset" class="btn btn-warning btn-block">重置</button>
+		</form>
+	</div>
+</div>
+
+<div id="historyDialog" style="z-index:1000; left:15%; top:5%; display:none; position: fixed; width: 1000px; height: 600px; background-color: #FCFCFC; border-radius: 10px; border: 2px #cdcdcd solid">
+	<div style="margin: 20px">
+		<button type="button" class="close" onclick="hideHistoryDialog()">
+			<span aria-hidden="true">&times;</span>
+		</button>
+		<table id="history_table" class="table table-bordered">
+
+		</table>
+	</div>
+</div>
+
+
+<div id="cluster-file"  style="margin-top:20px; width:100%; background-color: #dcdcdc;">
+		
+</div>
+
+<script type="text/javascript">
+	var appId;
+	var envId;
+	var clusterId;
+	$(document).ready(function(){
+		appId = $("#tabContent-appId").val();
+		envId = $("#tabContent-envId").val();
+		clusterId = $("#tabContent-clusterId").val();
+		reloadFiles(appId, envId, clusterId);
+	});
+	
+	function reloadFiles(appId, envId, clusterId) {
+		$.ajax({
+			type: "get",
+			url: "/api/v1/app/"+appId+"/env/"+envId+"/cluster/"+clusterId+"/file",
+			dataType: "json",
+			beforeSend: function(XMLHttpRequest) {
+				XMLHttpRequest.setRequestHeader("Authentication", localStorage.getItem("Authentication"));
+			},
+			success:function(retData) {
+				$("#cluster-file").html("");
+				if (retData.length>0) {
+					for (var i=0; i<retData.length; i++) {
+						console.log(retData[i]);
+						var fileDiv = $("<div style='margin-top:20px;'></div>").appendTo($("#cluster-file"));
+						var contents = "";
+						for(var key in retData[i].contents) {
+						   	contents += retData[i].contents[key]+",";
+						}
+						console.log(contents);
+						if (contents.length>1) {
+							contents = contents.substring(0,contents.length-1);
+						}
+						console.log(contents);
+						fileDiv.lingbao_file({
+							"appId": retData[i].appId,
+							"envId": retData[i].envId,
+							"clusterId": retData[i].clusterId,
+							"fileId": retData[i].id,
+							"fileName": retData[i].name,
+							"contents": contents
+						});
+					}
+				} 
+			},
+			error: function(e) {
+				console.log(e);
+				if (e.status===401) {
+					window.location.href='/login.html?'+window.location.href;
+				} else {
+					window.location.href='/index.html';
+				}
+			},
+			complete: function(code) {
+				console.log(code);
+			}
+		});
+	}
+	
+	function mergeFiles() {
+		$.lingbao_confirm({
+			content:"确认合并文件到父集群?",
+			confirmButtonCallBack: function() {
+				$.ajax({
+					type: "post",
+					url: "/api/v1/app/"+appId+"/env/"+envId+"/cluster/"+clusterId+"/file-merge",
+					contentType: "application/x-www-form-urlencoded",
+					data: {"deleteBranch":false},
+					beforeSend: function(XMLHttpRequest) {
+						XMLHttpRequest.setRequestHeader("Authentication", localStorage.getItem("Authentication"));
+					},
+					success:function(retData) {
+						reloadFiles(appId, envId, clusterId);
+						$.lingbao_popup({
+							content: retData.responseText
+						});
+					},
+					error: function(e) {
+						console.log(e);
+						$.lingbao_popup({
+							content: e.responseText
+						});
+						if (e.status===401) {
+							window.location.href='/login.html?'+window.location.href;
+						}
+					},
+					complete: function(code) {
+						console.log(code);
+					}
+				});
+			}
+		});
+	}
+	
+	function rollBackCommitFile() {
+		$.lingbao_confirm({
+			content:"确认回滚?",
+			confirmButtonCallBack: function() {
+				$.ajax({
+					type: "post",
+					url: "/api/v1/app/"+appId+"/env/"+envId+"/cluster/"+clusterId+"/file-rollback",
+					beforeSend: function(XMLHttpRequest) {
+						XMLHttpRequest.setRequestHeader("Authentication", localStorage.getItem("Authentication"));
+					},
+					success:function(retData) {
+						reloadFiles(appId, envId, clusterId);
+						$.lingbao_popup({
+							content: retData.responseText
+						});
+					},
+					error: function(e) {
+						console.log(e);
+						$.lingbao_popup({
+							content: e.responseText
+						});
+						if (e.status===401) {
+							window.location.href='/login.html?'+window.location.href;
+						}
+					},
+					complete: function(code) {
+						console.log(code);
+					}
+				});
+			}
+		});
+	}
+	
+	function pushCommitFiles() {
+		$.lingbao_confirm({
+			content:"确认发布?",
+			confirmButtonCallBack: function() {
+				$.ajax({
+					type: "post",
+					url: "/api/v1/app/"+appId+"/env/"+envId+"/cluster/"+clusterId+"/file-push",
+					beforeSend: function(XMLHttpRequest) {
+						XMLHttpRequest.setRequestHeader("Authentication", localStorage.getItem("Authentication"));
+					},
+					success:function(retData) {
+						$.lingbao_popup({
+							content: retData.responseText
+						});
+					},
+					error: function(e) {
+						console.log(e);
+						$.lingbao_popup({
+							content: e.responseText
+						});
+						if (e.status===401) {
+							window.location.href='/login.html?'+window.location.href;
+						}
+					},
+					complete: function(code) {
+						console.log(code);
+					}
+				});
+			}
+		});
+	}
+	
+	function commitFiles() {
+		var appId = $("#commitFileDialog").find("#commit-file-appId").val();
+		var envId = $("#commitFileDialog").find("#commit-file-envId").val();
+		var clusterId = $("#commitFileDialog").find("#commit-file-clusterId").val();
+		var comment = $("#commitFileDialog").find("#comment").val();
+		
+		console.log(appId+","+envId+","+clusterId+","+comment);
+		
+		if (!!!appId || !!!envId || !!!clusterId) {
+			window.location.href= "/index.html";
+			return;
+		}
+		
+		if (!!!comment) {
+			alert("备注不能为空");
+			return;
+		}
+		
+		var data = {
+			"comment": comment,
+		};
+		
+		$.ajax({
+			type: "post",
+			url: "/api/v1/app/"+appId+"/env/"+envId+"/cluster/"+clusterId+"/file-commit",
+			contentType: "application/x-www-form-urlencoded",
+			data: data,
+			beforeSend: function(XMLHttpRequest) {
+				XMLHttpRequest.setRequestHeader("Authentication", localStorage.getItem("Authentication"));
+			},
+			success:function(retData) {
+				$.lingbao_popup({
+					content: retData.responseText
+				});
+			},
+			error: function(e) {
+				console.log(e);
+				$.lingbao_popup({
+					content: e.responseText
+				});
+				if (e.status===401) {
+					window.location.href='/login.html?'+window.location.href;
+				}
+			},
+			complete: function(code) {
+				console.log(code);
+			}
+		});
+	}
+	
+	function hideHistoryDialog() {
+		$("#historyDialog").hide()
+	}
+	
+	function openHistoryDialog(){
+		$("#historyDialog").find("#history_table").bootstrapTable({
+			url: "/api/v1/app/"+appId+"/env/"+envId+"/cluster/"+clusterId+"/file/history?rand="+Math.random(),
+			ajaxOptions: {
+				headers: {"Authentication" : localStorage.getItem("Authentication")}
+			},
+			queryParams : function (params) {
+				console.log(params);
+                var temp = {   
+                    rows: params.limit,                         //页面大小
+                    pageIndex: (params.offset / params.limit),   //页码
+                    sort: params.sort,      //排序列名  
+                    sortOrder: params.order //排位命令（desc，asc） 
+                };
+                return temp;
+            },
+			sidePagination: "server",
+			pagination: true,
+			pageNumber: 1, 
+			pageSize:10,
+			pageList: [10, 25, 50, 100],
+			clickToSelect: true,
+			uniqueId: "commitKey", 
+			columns : [{
+				field : 'commitKey',
+				title : 'commitKey'
+			}, {
+				field : 'comment',
+				title : '备注'
+			}, {
+				field : 'createDate',
+				title : '提交时间',
+				formatter : function (value, row, index) {
+					return formatDateTime(value)
+				}
+			}, {
+				field : 'createBy',
+				title : '提交人'
+			},{
+				field : 'operate',
+				title : "操作",
+				formatter: function (value, row, index) {
+					console.log(value);
+					console.log(row);
+					console.log(index);
+					var result = "<a href='javascript:void(0)' onclick='rollBackCommitFileCommitKey("+JSON.stringify(row)+")'>回滚</a>";
+					result += "/";
+					result += "<a href='javascript:void(0)' onclick='openFileHtml("+JSON.stringify(row)+")'>查看</a>";
+					return result;
+				}
+			}]
+		});
+		$("#historyDialog").show().drag();
+	}
+	
+	function openFileHtml(row) {
+		window.open("/file/file.html?"+row.appId+"+"+row.envId+"+"+row.clusterId);
+	}
+	
+	function rollBackCommitFileCommitKey(row) {
+		$.lingbao_confirm({
+			content:"确认回滚?",
+			confirmButtonCallBack: function() {
+				$.ajax({
+					type: "post",
+					url: "/api/v1/app/"+row.appId+"/env/"+row.envId+"/cluster/"+row.clusterId+"/commitKey/"+row.commitKey+"/file-rollback",
+					beforeSend: function(XMLHttpRequest) {
+						XMLHttpRequest.setRequestHeader("Authentication", localStorage.getItem("Authentication"));
+					},
+					success:function(retData) {
+						reloadFiles(appId, envId, clusterId);
+						$("#historyDialog").find("#history_table").bootstrapTable('refresh',{url: "/api/v1/app/"+row.appId+"/env/"+row.envId+"/cluster/"+row.clusterId+"/file/history"});
+						$.lingbao_popup({
+							content: retData.responseText
+						});
+					},
+					error: function(e) {
+						console.log(e);
+						$.lingbao_popup({
+							content: e.responseText
+						});
+						if (e.status===401) {
+							window.location.href='/login.html?'+window.location.href;
+						}
+					},
+					complete: function(code) {
+						console.log(code);
+					}
+				});
+			}
+		});
+	}
+	
+	function hideCommitFileDialog() {
+		$("#commitFileDialog").hide()
+	}
+	
+	function openCommitFileDialog() {
+		$("#commitFileDialog").find("#commit-file-appId").val(appId);
+		$("#commitFileDialog").find("#commit-file-envId").val(envId);
+		$("#commitFileDialog").find("#commit-file-clusterId").val(clusterId);
+		$("#commitFileDialog").show().drag();
+	}
+	
+	function createNewFile() {
+		$("#fileDialog").find("#file-appId").val(appId);
+		$("#fileDialog").find("#file-envId").val(envId);
+		$("#fileDialog").find("#file-clusterId").val(clusterId);
+		$("#fileDialog").show().drag();
+	}
+	
+	function hideFileDialog(){
+		$("#fileDialog").hide()
+	}
+	
+	function commitCreateFile() {
+		var appId = $("#fileDialog").find("#file-appId").val();
+		var envId = $("#fileDialog").find("#file-envId").val();
+		var clusterId = $("#fileDialog").find("#file-clusterId").val();
+		var name = $("#fileForm").find("#name").val();
+		
+		if (!!!appId || !!!envId || !!!clusterId) {
+			window.location.href= "/index.html";
+			return;
+		}
+		
+		if (!!!name) {
+			alert("名称不能为空");
+			return;
+		}
+		
+		var data = JSON.stringify({
+			"appId": appId,
+			"envId": envId,
+			"clusterId": clusterId,
+			"name": name,
+		});
+		
+		$.ajax({
+			type: "put",
+			url: "/api/v1/app/"+appId+"/env/"+envId+"/cluster/"+clusterId+"/file",
+			contentType: "application/json;charset=UTF-8",
+			dataType: "json",
+			data: data,
+			beforeSend: function(XMLHttpRequest) {
+				XMLHttpRequest.setRequestHeader("Authentication", localStorage.getItem("Authentication"));
+			},
+			success:function(retData) {
+				var fileDiv = $("<div style='margin-top:20px;'></div>").appendTo($("#cluster-file"));
+				fileDiv.lingbao_file({
+					"appId": retData.appId,
+					"envId": retData.envId,
+					"clusterId": retData.clusterId,
+					"fileId": retData.id,
+					"fileName": retData.name
+				});
+			},
+			error: function(e) {
+				console.log(e);
+				$.lingbao_popup({
+					content: e.responseText
+				});
+				if (e.status===401) {
+					window.location.href='/login.html?'+window.location.href;
+				} 
+			},
+			complete: function(code) {
+				console.log(code);
+			}
+		});
+	}
+
+	
+	
+</script>
